@@ -9,23 +9,26 @@ This project is a simple text editor application built using Python and the Tkin
 
 The main window of the application contains a text area where users can input and edit text.
 #### File Menu:
-
+```
 New: Clears the text area, allowing the user to start a new document.
 Open: Opens a file dialog window for the user to select an existing text file to open.
 Save: Saves the current document. If the document has not been saved before, it prompts the user to specify a file name and location.
 Save As...: Allows the user to specify a file name and location to save the current document.
 Exit: Closes the application.
+```
 #### Edit Menu:
-
+```
 Undo: Undoes the last edit action.
 Redo: Redoes the last undone action.
 Cut: Cuts the selected text and places it on the clipboard.
 Copy: Copies the selected text to the clipboard.
 Paste: Pastes the text from the clipboard into the text area.
 Select All: Selects all text in the text area.
-Context Menu (Right-click Menu):
-
+```
+####Context Menu (Right-click Menu):
+```
 Provides quick access to cut, copy, paste, and select all actions via right-click.
+```
 #### Keyboard Shortcuts:
 
 Ctrl + A: Selects all text in the text area.
