@@ -52,6 +52,7 @@ Overall, this software provides a straightforward and user-friendly interface fo
 ## Screenshots:
 
 ![alt text](preview/main.jpg)
+![alt text](preview/open_with.jpg)
 
 ## Authors
 
