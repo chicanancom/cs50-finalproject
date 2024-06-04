@@ -1,16 +1,16 @@
 # MY TEXT EDITOR
-#### Video Demo:  <URL HERE>
+#### Video Demo: https://youtu.be/pkmIQsRSivU
 #### Description: my personal text editor
 ## Overview:
 This project is a simple text editor application built using Python, Tkinter library and winreg to register application. It provides basic text editing features such as creating new files, opening existing files, saving files, cutting, copying, and pasting text, selecting all text, and indenting text. Additionally, it supports keyboard shortcuts for common tasks.  
 Automatically register applications to open files on windows when open.  
-Can runs without python installed.  
+With pyinstaller, we can runs without python installed.  
 Users can adjust the text area size by resizing the main window to suit their preferences and customize the font of the text area to improve readability.  
 
 ## About
 This project is developed as final project for Harvard University's CS50x Introduction to Computer Science Course.
 
-This is an idea I came up while my microsoft office out of date.  
+This is an idea I came up while my microsoft office run out of date.  
 
 ## Components Explanation:
 #### Main Window:
@@ -23,6 +23,8 @@ Open: Opens a file dialog window for the user to select an existing text file to
 Save: Saves the current document. If the document has not been saved before, it prompts the user to specify a file name and location.  
 Save As...: Allows the user to specify a file name and location to save the current document.  
 Exit: Closes the application.  
+Find: Search all the text.  
+Replace: replace all found.  
 
 #### Edit Menu:
 
@@ -68,6 +70,10 @@ A bit..... slow:(( : This application is written in python( may not suitable for
 
 ## Conclusion:
 Overall, this software provides a straightforward and user-friendly interface for basic text editing tasks. It is lightweight, easy to use.
+
+## Update
+
+I giveup at replace and find_next button :((
 
 ## Screenshots:
 
