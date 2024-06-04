@@ -1,18 +1,23 @@
 import tkinter as tk
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, simpledialog, messagebox
 import sys
+from tkinter import ttk
+from tkinter import *
 import os
 import winreg
 
+
 class SimpleTextEditor:
+
     def __init__(self, root, file_path = None):
         self.root = root
         self.root.title("Mai tếc e đít tờ")
         self.text_frame = tk.Frame(self.root)
-        self.text_frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+        self.text_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=5)
         self.text_area = tk.Text(self.text_frame, undo=True)
         self.text_area.pack(fill=tk.BOTH, expand=1)
         self.text_area.config(font=("Arial", 12))
+
 
         # Menu bar
         self.menu_bar = tk.Menu(self.root)
@@ -24,47 +29,56 @@ class SimpleTextEditor:
         # File menu
         self.file_menu = tk.Menu(self.menu_bar, tearoff=0)
         self.menu_bar.add_cascade(label="File", menu=self.file_menu)
-        self.file_menu.add_command(label="New", command=self.new_file)
-        self.file_menu.add_command(label="Open", command=self.open_file)
-        self.file_menu.add_command(label="Save", command=self.save_file)
+        self.file_menu.add_command(label="New", command=self.new_file, accelerator='Ctrl+N')
+        self.file_menu.add_command(label="Open", command=self.open_file, accelerator='Ctrl+O')
+        self.file_menu.add_command(label="Save", command=self.save_file, accelerator='Ctrl+S')
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Exit", command=self.exit_editor)
 
         # Edit menu
         self.edit_menu = tk.Menu(self.menu_bar, tearoff=0)
         self.menu_bar.add_cascade(label="Edit", menu=self.edit_menu)
-        self.edit_menu.add_command(label="Undo", command=self.text_area.edit_undo)
-        self.edit_menu.add_command(label="Redo", command=self.text_area.edit_redo)
+        self.edit_menu.add_command(label="Undo", command=self.text_area.edit_undo, accelerator='Ctrl+Z')
+        self.edit_menu.add_command(label="Redo", command=self.text_area.edit_redo, accelerator='Ctrl+Y')
         self.edit_menu.add_separator()
-        self.edit_menu.add_command(label="Cut", command=self.cut)
-        self.edit_menu.add_command(label="Copy", command=self.coppy)
-        self.edit_menu.add_command(label="Paste", command=self.paste)
-        self.edit_menu.add_command(label="Select All", command=self.select_all)
+        self.edit_menu.add_command(label="Cut", command=self.cut, accelerator='Ctrl+X')
+        self.edit_menu.add_command(label="Copy", command=self.copy, accelerator='Ctrl+C')
+        self.edit_menu.add_command(label="Paste", command=self.paste, accelerator='Ctrl+V')
+        self.edit_menu.add_command(label="Select All", command=self.select_all, accelerator='Ctrl+A')
+        self.edit_menu.add_separator()
+        self.edit_menu.add_command(label="Find/Replace", command=self.find_replace_dialog)
 
         # Bind right-click to show context menu
         self.text_area.bind("<Button-3>", self.show_context_menu)
 
-        # ctrl+a
-        self.text_area.bind("<Control-a>", lambda event: self.select_all)
-        # ctrl+c
-        self.text_area.bind("<Control-c>", lambda event: self.coppy)
-        # ctrl+x
-        self.text_area.bind("<Control-x>", lambda event: self.cut)
-        # ctrl+v
-        self.text_area.bind("<Control-v>", lambda event: self.paste)
-        # tab
+        # ctrl+f
+        self.text_area.bind("<Control-f>", lambda event: self.find_replace_dialog())
+        # # ctrl+c
+        # self.text_area.bind("<Control-c>", lambda event: self.copy)
+        # # ctrl+x
+        # self.text_area.bind("<Control-x>", lambda event: self.cut)
+        # # ctrl+v
+        # self.text_area.bind("<Control-v>", lambda event: self.paste)
+        # # tab
         self.text_area.bind("<Tab>", self.indent)
 
         #file path
         if file_path:
             self.open_file(file_path)
-
         #register app
         self.register_app()
 
 
-    def new_file(self):
-        self.text_area.delete(1.0, tk.END)
+    def new_file(self, event=None):
+        if(messagebox.askyesno("Save?", "Do you wish to save current file?")):
+            self.save_file()
+            self.txt.delete('1.0', END)
+            self.window.title("Notepad")
+            self.currentFile = "No File"
+        else:
+            self.txt.delete('1.0', END)
+            self.window.title("Notepad")
+            self.currentFile = "No File"
 
     def open_file(self, file_path=None):
         if not file_path:
@@ -109,14 +123,24 @@ class SimpleTextEditor:
     def select_all(self):
         self.text_area.tag_add("sel", "1.0", "end")
 
-    def coppy(self):
-        self.text_area.event_generate("<<Copy>>")
+    def cut(self, event=None):
+        self.copy()
+        self.text_area.delete(tk.SEL_FIRST, tk.SEL_LAST)
 
-    def cut(self):
-        self.text_area.event_generate("<<Cut>>")
+    def copy(self, event=None):
+        self.root.clipboard_clear()
+        try:
+            text = self.text_area.get(tk.SEL_FIRST, tk.SEL_LAST)
+            self.root.clipboard_append(text)
+        except tk.TclError:
+            pass
 
-    def paste(self):
-        self.text_area.event_generate("<<Paste>>")
+    def paste(self, event=None):
+        try:
+            text = self.root.selection_get(selection='CLIPBOARD')
+            self.text_area.insert(tk.INSERT, text)
+        except tk.TclError:
+            pass
 
     def indent(self, event):
         self.text_area.insert(tk.INSERT, "       ")
@@ -133,6 +157,68 @@ class SimpleTextEditor:
                 winreg.SetValue(key, "", winreg.REG_SZ, "Open with YourApp")
         except Exception as e:
             messagebox.showerror("Error", f"Could not register app: {e}")
+
+    def find_replace_dialog(self):
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Find and Replace")
+
+        tk.Label(dialog, text="Find:").grid(row=0, column=0, padx=4, pady=4)
+        find_entry = tk.Entry(dialog, width=30)
+        find_entry.grid(row=0, column=1, padx=4, pady=4)
+
+        tk.Label(dialog, text="Replace:").grid(row=1, column=0, padx=4, pady=4)
+        replace_entry = tk.Entry(dialog, width=30)
+        replace_entry.grid(row=1, column=1, padx=4, pady=4)
+
+        def find_next():
+            self.find_text(find_entry.get())
+
+        def replace():
+            self.replace_text(find_entry.get(), replace_entry.get())
+
+        def replace_all():
+            self.replace_all_text(find_entry.get(), replace_entry.get())
+
+        tk.Button(dialog, text="Find Next", command=find_next).grid(row=2, column=0, padx=4, pady=4)
+        # tk.Button(dialog, text="Replace", command=replace).grid(row=2, column=1, padx=4, pady=4)
+        tk.Button(dialog, text="Replace All", command=replace_all).grid(row=2, column=1, padx=4, pady=4)
+
+    def find_text(self, find_string):
+        self.text_area.tag_remove('highlight', '1.0', tk.END)
+        if find_string:
+            start_pos = "1.0"
+            while True:
+                start_pos = self.text_area.search(find_string, start_pos, tk.END)
+                if not start_pos:
+                    break
+                end_pos = f"{start_pos} + {len(find_string)}c"
+                self.text_area.tag_add("highlight", start_pos, end_pos)
+                start_pos = end_pos
+            self.text_area.tag_config("highlight", background="yellow", foreground="black")
+
+    def replace_text(self, find_string, replace_string):
+        start_pos = self.text_area.index(tk.INSERT)
+        start_pos = self.text_area.search(find_string, start_pos, tk.END)
+        if start_pos:
+            end_pos = f"{start_pos} + {len(find_string)}c"
+            self.text_area.delete(start_pos, end_pos)
+            self.text_area.insert(start_pos, replace_string)
+            self.text_area.tag_remove('highlight', start_pos, end_pos)
+            self.find_start_pos = f"{start_pos} + {len(replace_string)}c"
+        self.find_text(find_string)
+
+    def replace_all_text(self, find_string, replace_string):
+        self.text_area.tag_remove('highlight', '1.0', tk.END)
+        if find_string and replace_string:
+            start_pos = "1.0"
+            while True:
+                start_pos = self.text_area.search(find_string, start_pos, tk.END)
+                if not start_pos:
+                    break
+                end_pos = f"{start_pos} + {len(find_string)}c"
+                self.text_area.delete(start_pos, end_pos)
+                self.text_area.insert(start_pos, replace_string)
+                start_pos = f"{start_pos} + {len(replace_string)}c"
 
 if __name__ == "__main__":
     root = tk.Tk()
