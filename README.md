@@ -54,6 +54,31 @@ To build the application, Python, Tkinter library and pyinstaller are used. The 
         except Exception as e:
             messagebox.showerror("Error", f"Could not register app: {e}")
 ```
+## Code Structure and Implementation
+The code is structured into a class (SimpleTextEditor) that encapsulates all the functionalities of the application. Here's a breakdown of the main components:  
+
+Initialization:  
+Sets up the main window, text area, and menu bar.  
+Configures the title and dimensions of the window.  
+Initializes the current file path to handle file operations.  
+
+File Operations:
+
+new_file: Clears the text area and resets the current file.  
+open_file: Opens a selected file and loads its content into the text area.  
+save_file: Saves the current content to the existing file or prompts for a new file name if it’s a first save.  
+save_file_as: Allows the user to save the document with a new name.  
+exit_editor: Exits the application, prompting to save changes if necessary.  
+Edit Operations:
+
+undo and redo: Undo and redo the last actions.  
+cut, copy, and paste: Handle text manipulation operations.  
+select_all: Selects all text in the document.  
+find_replace_dialog: Opens a dialog for finding and replacing text.  
+Additional Features:
+
+register_app: Registers the application to handle text files via the Windows registry.
+indent: Inserts a tab space when the Tab key is pressed.  
 
 #### Weaknesses:
 Lack of Advanced Features: The software lacks advanced features found in more robust text editors, such as syntax highlighting, plugin support, and advanced search functionalities. This makes it less suitable for programming and other specialized tasks.  
